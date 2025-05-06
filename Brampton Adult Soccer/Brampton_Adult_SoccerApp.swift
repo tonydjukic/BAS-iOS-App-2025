@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct Brampton_Adult_SoccerApp: App {
+    @AppStorage("basiOS_isAuthenticated") var basiOS_isAuthenticated = false
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if basiOS_isAuthenticated {
+                basiOS_HomeView(basiOS_isAuthenticated: $basiOS_isAuthenticated)
+            } else {
+                basiOS_LoginView(basiOS_isAuthenticated: $basiOS_isAuthenticated)
+            }
         }
     }
 }
