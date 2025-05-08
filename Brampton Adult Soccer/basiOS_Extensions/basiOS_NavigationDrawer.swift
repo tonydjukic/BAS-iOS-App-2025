@@ -128,3 +128,46 @@ private struct NavigationItem: View {
         }
     }
 }
+
+// MARK: - Toolbar for Navigation
+struct basiOS_Toolbar: ToolbarContent {
+    @Binding var showDrawer: Bool
+    var showGreeting: Bool
+    var greetingText: String? // Optional greeting text
+    
+    var body: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button {
+                withAnimation {
+                    showDrawer.toggle()
+                }
+            } label: {
+                Image(systemName: "line.horizontal.3")
+                    .font(.title2)
+                    .foregroundColor(.white)
+            }
+        }
+        
+        ToolbarItem(placement: .principal) {
+            if showGreeting, let greetingText = greetingText {
+                HStack {
+                    Spacer()
+                    Text(greetingText)
+                        .font(.callout)
+                        .foregroundColor(.white)
+                    Spacer()
+                }
+            }
+        }
+        
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                // Add functionality for the notification bell
+            } label: {
+                Image(systemName: "bell")
+                    .font(.title2)
+                    .foregroundColor(.white)
+            }
+        }
+    }
+}

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os.log
 
 struct basiOS_WPAuth {
     private static let basiOS_baseURL = "https://bramptonsoccer.com/wp-json/baslms/v1"
@@ -17,8 +18,8 @@ struct basiOS_WPAuth {
     ) {
         let endpoint = "\(basiOS_baseURL)/authenticate"
         guard let url = URL(string: endpoint) else {
-            completion(.failure(NSError(domain: "BASiOS", code: -1,
-                                     userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            completion(.failure(NSError(domain: "com.basiOS.auth", code: -1,
+                                         userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
         
@@ -31,7 +32,7 @@ struct basiOS_WPAuth {
         
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: credentials)
-            print("AUTH REQUEST: \(String(data: request.httpBody!, encoding: .utf8)!)")
+            os_log("AUTH REQUEST: %{public}@", log: OSLog.auth, type: .info, String(data: request.httpBody!, encoding: .utf8) ?? "Invalid body")
         } catch {
             completion(.failure(error))
             return
@@ -44,18 +45,18 @@ struct basiOS_WPAuth {
             }
             
             guard let httpResponse = response as? HTTPURLResponse else {
-                completion(.failure(NSError(domain: "BASiOS", code: -2,
-                                         userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
+                completion(.failure(NSError(domain: "com.basiOS.auth", code: -2,
+                                             userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
                 return
             }
             
             guard let data = data else {
-                completion(.failure(NSError(domain: "BASiOS", code: -3,
-                                         userInfo: [NSLocalizedDescriptionKey: "No data received"])))
+                completion(.failure(NSError(domain: "com.basiOS.auth", code: -3,
+                                             userInfo: [NSLocalizedDescriptionKey: "No data received"])))
                 return
             }
             
-            print("RAW RESPONSE: \(String(data: data, encoding: .utf8) ?? "Invalid data")")
+            os_log("RAW RESPONSE: %{public}@", log: OSLog.auth, type: .info, String(data: data, encoding: .utf8) ?? "Invalid data")
             
             do {
                 let response = try JSONDecoder().decode(basiOS_AuthResponse.self, from: data)
@@ -66,6 +67,11 @@ struct basiOS_WPAuth {
         }
         task.resume()
     }
+}
+
+// Define a custom OSLog category for auth-related logs
+extension OSLog {
+    static let auth = OSLog(subsystem: "com.basiOS.auth", category: "Authentication")
 }
 
 struct basiOS_AuthResponse: Codable {
