@@ -4,6 +4,12 @@ This is the official Brampton Adult Soccer iOS app that integrates and communica
 
 ## CHANGELOG
 
+ = 0.3 =
+ * NEW: Building out the full Player Profile view and including demographic data for the user: Photo (pending/approved) and a placeholder, name, DOB, Age, Phone, Alt. Phone, Email, Address, Team History with links to team pages on site.
+ * CHANGE: Cleaning up codebase to reduce individual file sizes and better organize functionality.
+ * UPCOMING: Ensure there is no duplication of duties or functions across files (see Toolbar)
+ * UPCOMING: The notification 'Bell' icon is temporarily hidden, we need to reactivate it and give it a purpose.
+
  = 0.2 =
  * NEW: Setting up a login screen when a user first launches the app, it retains the users credentials for WP because we'll repeatedly need them to fire to retrieve data that should ultimately be private.
  * NEW: Establishing a Dashboard/Home View where we greet the user with a "Welcome Firstname Lastname" message and then we display their upcoming matches.

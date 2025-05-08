@@ -42,14 +42,14 @@ struct MatchDetailPopup: View {
                 }
                 .padding(.bottom, 10)
                 
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 0) {
                     Text("Match Details")
                         .font(.title2.bold())
                         .padding(.bottom, 8)
                         .frame(maxWidth: .infinity)
                         .foregroundColor(.white)
                     
-                    HStack {
+                    VStack {
                         HStack(spacing: 4) {
                             Image(systemName: "tshirt.fill")
                                 .foregroundColor(Color(hex: match.home_team.jersey_color))
@@ -57,29 +57,35 @@ struct MatchDetailPopup: View {
                                     Image(systemName: "tshirt")
                                         .foregroundColor(.white.opacity(0.4))
                                 )
+                                .font(.title2)
                             Text(match.home_team.name)
+                                .font(.title2)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(maxWidth: .infinity,)
                         
                         Text("vs")
-                            .font(.caption)
+                            .font(.footnote)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
+                            .padding(4)
                         
                         HStack(spacing: 4) {
-                            Text(match.away_team.name)
                             Image(systemName: "tshirt.fill")
                                 .foregroundColor(Color(hex: match.away_team.jersey_color))
                                 .overlay(
                                     Image(systemName: "tshirt")
                                         .foregroundColor(.white.opacity(0.4))
                                 )
+                                .font(.title2)
+                            Text(match.away_team.name)
+                                .font(.title2)
                         }
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .frame(maxWidth: .infinity,)
                     }
                     .font(.body)
                     .foregroundColor(.white)
-                    .padding(.vertical, 8)
+                    .padding(8)
+                    .padding(.bottom, 16)
                     
                     DetailRow(title: "Date:", value: formatMatchDate(match.match_date))
                     DetailRow(title: "Time:", value: match.match_time)

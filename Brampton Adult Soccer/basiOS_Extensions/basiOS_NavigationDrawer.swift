@@ -160,14 +160,15 @@ struct basiOS_Toolbar: ToolbarContent {
             }
         }
         
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                // Add functionality for the notification bell
-            } label: {
-                Image(systemName: "bell")
-                    .font(.title2)
-                    .foregroundColor(.white)
-            }
-        }
+        //Temporarily comment out the notification bar...
+//        ToolbarItem(placement: .navigationBarTrailing) {
+//            Button {
+//                // Add functionality for the notification bell
+//            } label: {
+//                Image(systemName: "bell")
+//                    .font(.title2)
+//                    .foregroundColor(.white)
+//            }
+//        }
     }
 }

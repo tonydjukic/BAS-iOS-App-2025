@@ -115,13 +115,13 @@ struct basiOS_HomeView: View {
             Spacer()
 
             // Right: Notification button
-            Button(action: {
-                // Placeholder for notification functionality
-            }) {
-                Image(systemName: "bell")
-                    .font(.title2)
-                    .foregroundColor(.white)
-            }
+//            Button(action: {
+//                // Placeholder for notification functionality
+//            }) {
+//                Image(systemName: "bell")
+//                    .font(.title2)
+//                    .foregroundColor(.white)
+//            }
         }
         .padding()
         .background(Color.black.opacity(0.7)) // Semi-transparent background
