@@ -134,6 +134,7 @@ struct basiOS_ProfileView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(.black)
                 
                 VStack(alignment: .trailing, spacing: 8) {
                     Text("Gender")
@@ -147,6 +148,7 @@ struct basiOS_ProfileView: View {
                         .font(.subheadline)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
+                .foregroundColor(.black)
             }
             
             // Row 2: Email (Full Width)
@@ -157,6 +159,7 @@ struct basiOS_ProfileView: View {
                     .font(.subheadline)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundColor(.black)
             
             // Row 3: Phone 1 (Left) and Phone 2 (Right)
             HStack {
@@ -167,6 +170,8 @@ struct basiOS_ProfileView: View {
                         .font(.subheadline)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundColor(.black)
+                
                 
                 VStack(alignment: .trailing, spacing: 8) {
                     Text("Phone 2")
@@ -175,6 +180,7 @@ struct basiOS_ProfileView: View {
                         .font(.subheadline)
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
+                .foregroundColor(.black)
             }
             
             // Row 4: Address (Full Width)
@@ -189,12 +195,14 @@ struct basiOS_ProfileView: View {
                     .font(.subheadline)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundColor(.black)
             
             // Row 5: Team History (Full Width, Center)
             VStack(spacing: 8) {
                 Text("Team History")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .foregroundColor(.black)
                 
                 ForEach(profileData.team_history, id: \.id) { team in
                     VStack(spacing: 4) {
@@ -209,6 +217,7 @@ struct basiOS_ProfileView: View {
                             .opacity(0.9)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
+                    .foregroundColor(.black)
                 }
             }
         }

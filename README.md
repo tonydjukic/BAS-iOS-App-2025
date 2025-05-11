@@ -4,6 +4,10 @@ This is the official Brampton Adult Soccer iOS app that integrates and communica
 
 ## CHANGELOG
 
+ = 0.4 =
+ * NEW: Added app icons for final build and release of first public version.
+ * FIX: basiOS_KeychainHelper.swift was unable to properly clear out user data when an individual would swith between accounts.
+
  = 0.3 =
  * NEW: Building out the full Player Profile view and including demographic data for the user: Photo (pending/approved) and a placeholder, name, DOB, Age, Phone, Alt. Phone, Email, Address, Team History with links to team pages on site.
  * CHANGE: Cleaning up codebase to reduce individual file sizes and better organize functionality.

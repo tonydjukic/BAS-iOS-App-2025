@@ -32,7 +32,7 @@ struct basiOS_WPAuth {
         
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: credentials)
-            os_log("AUTH REQUEST: %{public}@", log: OSLog.auth, type: .info, String(data: request.httpBody!, encoding: .utf8) ?? "Invalid body")
+            os_log("Authentication request initiated.", log: OSLog.auth, type: .info)
         } catch {
             completion(.failure(error))
             return
@@ -56,12 +56,18 @@ struct basiOS_WPAuth {
                 return
             }
             
-            os_log("RAW RESPONSE: %{public}@", log: OSLog.auth, type: .info, String(data: data, encoding: .utf8) ?? "Invalid data")
+            if httpResponse.statusCode == 401 {
+                os_log("Authentication failed with status code 401.", log: OSLog.auth, type: .error)
+                completion(.failure(NSError(domain: "com.basiOS.auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "Authentication failed"])))
+                return
+            }
             
             do {
                 let response = try JSONDecoder().decode(basiOS_AuthResponse.self, from: data)
+                os_log("Authentication successful.", log: OSLog.auth, type: .info)
                 completion(.success(response))
             } catch {
+                os_log("Authentication response decoding failed.", log: OSLog.auth, type: .error)
                 completion(.failure(error))
             }
         }

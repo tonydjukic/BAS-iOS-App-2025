@@ -155,8 +155,21 @@ struct basiOS_HomeView: View {
     }
 
     private func basiOS_logout() {
+//        basiOS_KeychainHelper.basiOS_delete(key: "basiOS_sessionToken")
+//        basiOS_KeychainHelper.basiOS_delete(key: "basiOS_userID")
+        // Clear Keychain data
         basiOS_KeychainHelper.basiOS_delete(key: "basiOS_sessionToken")
         basiOS_KeychainHelper.basiOS_delete(key: "basiOS_userID")
+        // Clear UserDefaults
+        UserDefaults.standard.removeObject(forKey: "authToken")
+        UserDefaults.standard.removeObject(forKey: "userID")
+        UserDefaults.standard.synchronize()
+        // Clear cookies if using web-based APIs
+        if let cookieStorage = HTTPCookieStorage.shared.cookies {
+            for cookie in cookieStorage {
+                HTTPCookieStorage.shared.deleteCookie(cookie)
+            }
+        }
         DispatchQueue.main.async {
             withAnimation {
                 basiOS_isAuthenticated = false

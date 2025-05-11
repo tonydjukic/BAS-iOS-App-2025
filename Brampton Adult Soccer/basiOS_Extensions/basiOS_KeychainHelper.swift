@@ -15,21 +15,39 @@ struct basiOS_KeychainHelper {
     static func basiOS_save(key: String, data: Data) -> Bool {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
-            kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock // Updated Accessibility
+            kSecAttrAccount as String: key
         ]
-        
-        SecItemDelete(query as CFDictionary) // Remove any existing item with the same key
-        let status = SecItemAdd(query as CFDictionary, nil)
-        
-        if status != errSecSuccess {
-            os_log("Failed to save keychain item for key %{public}@. Status: %d", log: OSLog.keychain, type: .error, key, status)
+
+        // Check if the item already exists
+        var dataTypeRef: AnyObject?
+        let matchStatus = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
+
+        if matchStatus == errSecSuccess {
+            // Update the item if it exists
+            os_log("Keychain item exists. Updating.", log: OSLog.keychain, type: .info)
+            let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData: data] as CFDictionary)
+            if updateStatus != errSecSuccess {
+                os_log("Failed to update keychain item. Status: %d", log: OSLog.keychain, type: .error, updateStatus)
+            }
+            return updateStatus == errSecSuccess
+        } else if matchStatus == errSecItemNotFound {
+            // Add the item if it does not exist
+            os_log("Keychain item not found. Adding new item.", log: OSLog.keychain, type: .info)
+            var newQuery = query
+            newQuery[kSecValueData as String] = data
+            newQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock // Accessibility
+            let addStatus = SecItemAdd(newQuery as CFDictionary, nil)
+            if addStatus != errSecSuccess {
+                os_log("Failed to add keychain item. Status: %d", log: OSLog.keychain, type: .error, addStatus)
+            }
+            return addStatus == errSecSuccess
+        } else {
+            // Log unexpected errors
+            os_log("Unexpected error during keychain operation. Status: %d", log: OSLog.keychain, type: .error, matchStatus)
+            return false
         }
-        
-        return status == errSecSuccess
     }
-    
+
     /// Load data from the keychain
     static func basiOS_load(key: String) -> Data? {
         let query: [String: Any] = [
@@ -38,17 +56,18 @@ struct basiOS_KeychainHelper {
             kSecReturnData as String: kCFBooleanTrue!,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
-        
+
         var dataTypeRef: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
-        
+
         if status != errSecSuccess {
-            os_log("Failed to load keychain item for key %{public}@. Status: %d", log: OSLog.keychain, type: .error, key, status)
+            os_log("Failed to load keychain item. Status: %d", log: OSLog.keychain, type: .error, status)
+            return nil
         }
-        
-        return status == errSecSuccess ? (dataTypeRef as? Data) : nil
+
+        return dataTypeRef as? Data
     }
-    
+
     /// Delete data from the keychain
     @discardableResult
     static func basiOS_delete(key: String) -> Bool {
@@ -56,13 +75,15 @@ struct basiOS_KeychainHelper {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key
         ]
-        
+
         let status = SecItemDelete(query as CFDictionary)
-        
+
         if status != errSecSuccess && status != errSecItemNotFound {
-            os_log("Failed to delete keychain item for key %{public}@. Status: %d", log: OSLog.keychain, type: .error, key, status)
+            os_log("Failed to delete keychain item. Status: %d", log: OSLog.keychain, type: .error, status)
+        } else {
+            os_log("Keychain item deleted or not found.", log: OSLog.keychain, type: .info)
         }
-        
+
         // Return true if the item was successfully deleted or not found
         return status == errSecSuccess || status == errSecItemNotFound
     }

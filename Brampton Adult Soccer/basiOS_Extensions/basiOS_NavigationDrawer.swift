@@ -77,6 +77,13 @@ struct basiOS_NavigationDrawer: View {
                                 action: basiOS_logout
                             )
                             .padding(25)
+                            // App Version
+                            if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                                Text("Version \(appVersion)")
+                                    .font(.caption)
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .padding(.leading, 0)
+                            }
                         }
                     }
                 }
