@@ -18,6 +18,7 @@ struct basiOS_WPAuth {
     ) {
         let endpoint = "\(basiOS_baseURL)/authenticate"
         guard let url = URL(string: endpoint) else {
+            os_log("Error: Invalid URL in authentication request.", log: OSLog.auth, type: .error)
             completion(.failure(NSError(domain: "com.basiOS.auth", code: -1,
                                          userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
@@ -32,42 +33,44 @@ struct basiOS_WPAuth {
         
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: credentials)
-            os_log("Authentication request initiated.", log: OSLog.auth, type: .info)
         } catch {
+            os_log("Error: Failed to serialize authentication request body.", log: OSLog.auth, type: .error)
             completion(.failure(error))
             return
         }
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
+                os_log("Error: Authentication request failed - %{public}@", log: OSLog.auth, type: .error, error.localizedDescription)
                 completion(.failure(error))
                 return
             }
             
             guard let httpResponse = response as? HTTPURLResponse else {
+                os_log("Error: Invalid response in authentication request.", log: OSLog.auth, type: .error)
                 completion(.failure(NSError(domain: "com.basiOS.auth", code: -2,
                                              userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
                 return
             }
             
             guard let data = data else {
+                os_log("Error: No data received in authentication response.", log: OSLog.auth, type: .error)
                 completion(.failure(NSError(domain: "com.basiOS.auth", code: -3,
                                              userInfo: [NSLocalizedDescriptionKey: "No data received"])))
                 return
             }
             
             if httpResponse.statusCode == 401 {
-                os_log("Authentication failed with status code 401.", log: OSLog.auth, type: .error)
+                os_log("Error: Authentication failed with status code 401.", log: OSLog.auth, type: .error)
                 completion(.failure(NSError(domain: "com.basiOS.auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "Authentication failed"])))
                 return
             }
             
             do {
                 let response = try JSONDecoder().decode(basiOS_AuthResponse.self, from: data)
-                os_log("Authentication successful.", log: OSLog.auth, type: .info)
                 completion(.success(response))
             } catch {
-                os_log("Authentication response decoding failed.", log: OSLog.auth, type: .error)
+                os_log("Error: Failed to decode authentication response data.", log: OSLog.auth, type: .error)
                 completion(.failure(error))
             }
         }

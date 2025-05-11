@@ -24,26 +24,24 @@ struct basiOS_KeychainHelper {
 
         if matchStatus == errSecSuccess {
             // Update the item if it exists
-            os_log("Keychain item exists. Updating.", log: OSLog.keychain, type: .info)
             let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData: data] as CFDictionary)
             if updateStatus != errSecSuccess {
-                os_log("Failed to update keychain item. Status: %d", log: OSLog.keychain, type: .error, updateStatus)
+                os_log("Error: Failed to update keychain item. Status: %d", log: OSLog.keychain, type: .error, updateStatus)
             }
             return updateStatus == errSecSuccess
         } else if matchStatus == errSecItemNotFound {
             // Add the item if it does not exist
-            os_log("Keychain item not found. Adding new item.", log: OSLog.keychain, type: .info)
             var newQuery = query
             newQuery[kSecValueData as String] = data
             newQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock // Accessibility
             let addStatus = SecItemAdd(newQuery as CFDictionary, nil)
             if addStatus != errSecSuccess {
-                os_log("Failed to add keychain item. Status: %d", log: OSLog.keychain, type: .error, addStatus)
+                os_log("Error: Failed to add keychain item. Status: %d", log: OSLog.keychain, type: .error, addStatus)
             }
             return addStatus == errSecSuccess
         } else {
             // Log unexpected errors
-            os_log("Unexpected error during keychain operation. Status: %d", log: OSLog.keychain, type: .error, matchStatus)
+            os_log("Error: Unexpected error during keychain operation. Status: %d", log: OSLog.keychain, type: .error, matchStatus)
             return false
         }
     }
@@ -61,7 +59,7 @@ struct basiOS_KeychainHelper {
         let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
 
         if status != errSecSuccess {
-            os_log("Failed to load keychain item. Status: %d", log: OSLog.keychain, type: .error, status)
+            os_log("Error: Failed to load keychain item. Status: %d", log: OSLog.keychain, type: .error, status)
             return nil
         }
 
@@ -79,9 +77,7 @@ struct basiOS_KeychainHelper {
         let status = SecItemDelete(query as CFDictionary)
 
         if status != errSecSuccess && status != errSecItemNotFound {
-            os_log("Failed to delete keychain item. Status: %d", log: OSLog.keychain, type: .error, status)
-        } else {
-            os_log("Keychain item deleted or not found.", log: OSLog.keychain, type: .info)
+            os_log("Error: Failed to delete keychain item. Status: %d", log: OSLog.keychain, type: .error, status)
         }
 
         // Return true if the item was successfully deleted or not found
