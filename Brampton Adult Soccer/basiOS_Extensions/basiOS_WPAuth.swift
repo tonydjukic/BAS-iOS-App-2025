@@ -9,7 +9,8 @@ import Foundation
 import os.log
 
 struct basiOS_WPAuth {
-    private static let basiOS_baseURL = "https://bramptonsoccer.com/wp-json/baslms/v1"
+//    private static let basiOS_baseURL = "https://bramptonsoccer.com/wp-json/baslms/v1"
+    private static let basiOS_baseURL = Config.apiBaseURL // Use Config for API base URL
 
     static func basiOS_authenticate(
         login: String,
@@ -29,8 +30,8 @@ struct basiOS_WPAuth {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.timeoutInterval = 15
 
+        // Serialize credentials for the HTTP body (do not log this)
         let credentials = ["login": login, "password": password]
-
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: credentials)
         } catch {

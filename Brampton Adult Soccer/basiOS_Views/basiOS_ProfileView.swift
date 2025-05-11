@@ -259,8 +259,8 @@ struct basiOS_ProfileView: View {
         isLoading = true
         errorMessage = nil
 
-        let apiURL = URL(string: "https://bramptonsoccer.com/wp-json/baslms/v1/user-demographics?user_id=\(user.id)")!
-
+//        let apiURL = URL(string: "https://bramptonsoccer.com/wp-json/baslms/v1/user-demographics?user_id=\(user.id)")!
+        let apiURL = URL(string: "\(Config.apiBaseURL)/user-demographics?user_id=\(user.id)")!
         guard let savedLoginData = basiOS_KeychainHelper.basiOS_load(key: "basiOS_savedLogin"),
               let savedLogin = String(data: savedLoginData, encoding: .utf8),
               let savedPasswordData = basiOS_KeychainHelper.basiOS_load(key: "basiOS_password"),
