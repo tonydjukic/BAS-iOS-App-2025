@@ -8,7 +8,7 @@
 import Foundation
 
 struct basiOS_WPMatchData {
-    private static let basiOS_baseURL = "https://bramptonsoccer.com/wp-json/baslms/v1"
+    private static let basiOS_baseURL = Config.apiBaseURL // Use Config for API base URL
     
     static func basiOS_fetchMatchData(
         userID: Int,
