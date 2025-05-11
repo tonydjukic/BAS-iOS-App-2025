@@ -10,7 +10,7 @@ import os.log
 
 struct basiOS_WPAuth {
     private static let basiOS_baseURL = "https://bramptonsoccer.com/wp-json/baslms/v1"
-    
+
     static func basiOS_authenticate(
         login: String,
         password: String,
@@ -23,14 +23,14 @@ struct basiOS_WPAuth {
                                          userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
             return
         }
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.timeoutInterval = 15
-        
+
         let credentials = ["login": login, "password": password]
-        
+
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: credentials)
         } catch {
@@ -38,34 +38,34 @@ struct basiOS_WPAuth {
             completion(.failure(error))
             return
         }
-        
+
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                os_log("Error: Authentication request failed - %{public}@", log: OSLog.auth, type: .error, error.localizedDescription)
+                os_log("Error: Authentication request failed.", log: OSLog.auth, type: .error)
                 completion(.failure(error))
                 return
             }
-            
+
             guard let httpResponse = response as? HTTPURLResponse else {
                 os_log("Error: Invalid response in authentication request.", log: OSLog.auth, type: .error)
                 completion(.failure(NSError(domain: "com.basiOS.auth", code: -2,
                                              userInfo: [NSLocalizedDescriptionKey: "Invalid response"])))
                 return
             }
-            
+
             guard let data = data else {
                 os_log("Error: No data received in authentication response.", log: OSLog.auth, type: .error)
                 completion(.failure(NSError(domain: "com.basiOS.auth", code: -3,
                                              userInfo: [NSLocalizedDescriptionKey: "No data received"])))
                 return
             }
-            
+
             if httpResponse.statusCode == 401 {
                 os_log("Error: Authentication failed with status code 401.", log: OSLog.auth, type: .error)
                 completion(.failure(NSError(domain: "com.basiOS.auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "Authentication failed"])))
                 return
             }
-            
+
             do {
                 let response = try JSONDecoder().decode(basiOS_AuthResponse.self, from: data)
                 completion(.success(response))
@@ -91,7 +91,7 @@ struct basiOS_AuthResponse: Codable {
 struct basiOS_AuthData: Codable {
     let user: basiOS_User
     let sessionToken: String
-    
+
     enum CodingKeys: String, CodingKey {
         case user
         case sessionToken = "session_token"
@@ -105,7 +105,7 @@ struct basiOS_User: Codable {
     let firstName: String?
     let lastName: String?
     let roles: [String]
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case email

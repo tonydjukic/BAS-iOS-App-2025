@@ -110,7 +110,16 @@ struct basiOS_LoginView: View {
                 case .success(let response):
                     self.basiOS_handleLoginSuccess(response: response)
                 case .failure(let error):
-                    basiOS_errorMessage = error.localizedDescription
+                    // Inspect error for HTTP 429 (too many attempts)
+                    if let urlError = error as? URLError, let response = urlError.userInfo["response"] as? HTTPURLResponse {
+                        if response.statusCode == 429 {
+                            basiOS_errorMessage = "Too many login attempts. Please try again later."
+                        } else {
+                            basiOS_errorMessage = error.localizedDescription
+                        }
+                    } else {
+                        basiOS_errorMessage = error.localizedDescription
+                    }
                     basiOS_showError = true
                 }
             }

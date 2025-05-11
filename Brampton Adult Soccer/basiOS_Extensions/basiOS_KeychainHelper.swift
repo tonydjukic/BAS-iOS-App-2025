@@ -1,10 +1,3 @@
-//
-//  basiOS_KeychainHelper.swift
-//  Brampton Adult Soccer
-//
-//  Created by Tony Djukic on 2025-04-30.
-//
-
 import Foundation
 import Security
 import os.log
@@ -26,7 +19,7 @@ struct basiOS_KeychainHelper {
             // Update the item if it exists
             let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData: data] as CFDictionary)
             if updateStatus != errSecSuccess {
-                os_log("Error: Failed to update keychain item. Status: %d", log: OSLog.keychain, type: .error, updateStatus)
+                os_log("Error: Failed to update keychain item.", log: OSLog.keychain, type: .error)
             }
             return updateStatus == errSecSuccess
         } else if matchStatus == errSecItemNotFound {
@@ -36,12 +29,12 @@ struct basiOS_KeychainHelper {
             newQuery[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock // Accessibility
             let addStatus = SecItemAdd(newQuery as CFDictionary, nil)
             if addStatus != errSecSuccess {
-                os_log("Error: Failed to add keychain item. Status: %d", log: OSLog.keychain, type: .error, addStatus)
+                os_log("Error: Failed to add keychain item.", log: OSLog.keychain, type: .error)
             }
             return addStatus == errSecSuccess
         } else {
             // Log unexpected errors
-            os_log("Error: Unexpected error during keychain operation. Status: %d", log: OSLog.keychain, type: .error, matchStatus)
+            os_log("Error: Unexpected error during keychain operation.", log: OSLog.keychain, type: .error)
             return false
         }
     }
@@ -59,7 +52,7 @@ struct basiOS_KeychainHelper {
         let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
 
         if status != errSecSuccess {
-            os_log("Error: Failed to load keychain item. Status: %d", log: OSLog.keychain, type: .error, status)
+            os_log("Error: Failed to load keychain item.", log: OSLog.keychain, type: .error)
             return nil
         }
 
@@ -77,7 +70,7 @@ struct basiOS_KeychainHelper {
         let status = SecItemDelete(query as CFDictionary)
 
         if status != errSecSuccess && status != errSecItemNotFound {
-            os_log("Error: Failed to delete keychain item. Status: %d", log: OSLog.keychain, type: .error, status)
+            os_log("Error: Failed to delete keychain item.", log: OSLog.keychain, type: .error)
         }
 
         // Return true if the item was successfully deleted or not found
