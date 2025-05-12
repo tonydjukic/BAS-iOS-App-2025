@@ -49,6 +49,21 @@ struct MatchDetailPopup: View {
                         .frame(maxWidth: .infinity)
                         .foregroundColor(.white)
                     
+                    if match.is_suspended {
+                        Text("You are suspended for this match.")
+                            .font(.footnote)
+                            .padding(.bottom, 6)
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white)
+                        Text("Speak with your Team Rep.")
+                            .font(.footnote)
+                            .padding(.bottom, 8)
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white)
+                    }
+                    
                     VStack {
                         HStack(spacing: 4) {
                             Image(systemName: "tshirt.fill")

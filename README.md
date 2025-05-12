@@ -4,6 +4,10 @@ This is the official Brampton Adult Soccer iOS app that integrates and communica
 
 ## CHANGELOG
 
+ = 0.6 =
+ * NEW: Making use of the `is_suspended` data we pass along from the WP `user_sessions` API to flag matches where a user is suspended.
+ * NEW: Resubmitting the app to the AppStore Connect platform.
+
  = 0.4 =
  * NEW: Added app icons for final build and release of first public version.
  * FIX: basiOS_KeychainHelper.swift was unable to properly clear out user data when an individual would swith between accounts.

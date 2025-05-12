@@ -13,7 +13,7 @@ struct DashboardContentView: View {
     let isLoading: Bool
     @Binding var errorMessage: String?
     @Binding var selectedMatch: basiOS_Match?
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Text("Your Upcoming Matches")
@@ -24,7 +24,7 @@ struct DashboardContentView: View {
                 .background(Color.black.opacity(0.2))
                 .cornerRadius(10)
                 .frame(maxWidth: .infinity)
-            
+
             if isLoading {
                 ProgressView()
                     .tint(.white)
@@ -44,19 +44,20 @@ struct DashboardContentView: View {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text("\(match.match_date) at \(match.match_time)")
                                         .font(.caption)
-                                        .foregroundColor(.black)
+                                        .foregroundColor( match.is_suspended ? Color.white : Color.black)
                                         .frame(maxWidth: .infinity)
                                     Text("\(match.home_team.name) vs \(match.away_team.name)")
                                         .font(.subheadline)
-                                        .foregroundColor(.black)
+                                        .foregroundColor( match.is_suspended ? Color.white : Color.black)
+                                        .strikethrough( match.is_suspended ? true : false )
                                         .frame(maxWidth: .infinity)
                                     Text(match.venue.title)
                                         .font(.caption)
-                                        .foregroundColor(.black.opacity(0.8))
+                                        .foregroundColor( match.is_suspended ? Color.white.opacity(0.8) : Color.black.opacity(0.8) )
                                         .frame(maxWidth: .infinity)
                                 }
                                 .padding(8)
-                                .background(Color.white.opacity(0.5))
+                                .background(match.is_suspended ? Color.black.opacity(0.5) : Color.white.opacity(0.5)) // Updated background color
                                 .cornerRadius(6)
                                 .overlay(
                                     HStack {
