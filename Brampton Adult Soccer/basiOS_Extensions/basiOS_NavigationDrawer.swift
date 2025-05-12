@@ -12,7 +12,7 @@ struct basiOS_NavigationDrawer: View {
     @Binding var selectedView: basiOS_HomeView.NavigationDestination
     @Binding var basiOS_isAuthenticated: Bool
     let width: CGFloat = UIScreen.main.bounds.width * 0.8
-    
+
     var body: some View {
         ZStack(alignment: .leading) {
             // Dimmed background
@@ -25,20 +25,20 @@ struct basiOS_NavigationDrawer: View {
                         }
                     }
             }
-            
+
             // Drawer content
             HStack(spacing: 0) {
                 ZStack {
                     Color.clear
                         .basiOS_DarkSlateGradient()
-                    
+
                     VStack(alignment: .leading, spacing: 0) {
                         // Header
                         Divider()
                             .background(Color.white.opacity(0.5))
                             .padding(.top, 25)
                             .padding(.horizontal, 25)
-                        
+
                         // Navigation Items
                         VStack(alignment: .leading, spacing: 20) {
                             NavigationItem(
@@ -50,7 +50,7 @@ struct basiOS_NavigationDrawer: View {
                                     withAnimation { isOpen = false }
                                 }
                             )
-                            
+
                             NavigationItem(
                                 icon: "person.crop.circle",
                                 label: "Player Profile",
@@ -62,14 +62,14 @@ struct basiOS_NavigationDrawer: View {
                             )
                         }
                         .padding(25)
-                        
+
                         Spacer()
-                        
+
                         // Logout Button
                         VStack {
                             Divider()
                                 .background(Color.white.opacity(0.5))
-                            
+
                             NavigationItem(
                                 icon: "rectangle.portrait.and.arrow.right",
                                 label: "Log Out",
@@ -90,16 +90,16 @@ struct basiOS_NavigationDrawer: View {
                 .frame(width: width)
                 .offset(x: isOpen ? 0 : -width)
                 .animation(.easeInOut(duration: 0.3), value: isOpen)
-                
+
                 Spacer()
             }
         }
     }
-    
+
     private func basiOS_logout() {
         basiOS_KeychainHelper.basiOS_delete(key: "basiOS_sessionToken")
         basiOS_KeychainHelper.basiOS_delete(key: "basiOS_userID")
-        
+
         DispatchQueue.main.async {
             withAnimation {
                 basiOS_isAuthenticated = false
@@ -113,7 +113,7 @@ private struct NavigationItem: View {
     let label: String
     let isActive: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 15) {
@@ -121,11 +121,11 @@ private struct NavigationItem: View {
                     .font(.system(size: 20))
                     .foregroundColor(isActive ? Color(red: 1.0, green: 0.75, blue: 0.35) : .white)
                     .frame(width: 30)
-                
+
                 Text(label)
                     .font(.system(size: 18, weight: .medium))
                     .foregroundColor(isActive ? Color(red: 1.0, green: 0.75, blue: 0.35) : .white)
-                
+
                 Spacer()
             }
             .padding(.vertical, 12)
@@ -137,45 +137,53 @@ private struct NavigationItem: View {
 }
 
 // MARK: - Toolbar for Navigation
-struct basiOS_Toolbar: ToolbarContent {
+struct basiOS_Toolbar: View {
     @Binding var showDrawer: Bool
     var showGreeting: Bool
     var greetingText: String? // Optional greeting text
-    
-    var body: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button {
-                withAnimation {
-                    showDrawer.toggle()
+
+    var body: some View {
+        ZStack {
+            // Apply Dark Slate Gradient to the entire toolbar background
+            Color.clear
+                .basiOS_DarkSlateGradient()
+                .edgesIgnoringSafeArea(.top)
+
+            HStack {
+                // Drawer Button (Leading)
+                Button {
+                    withAnimation {
+                        showDrawer.toggle()
+                    }
+                } label: {
+                    Image(systemName: "line.horizontal.3")
+                        .font(.title2)
+                        .foregroundColor(.white)
                 }
-            } label: {
-                Image(systemName: "line.horizontal.3")
-                    .font(.title2)
-                    .foregroundColor(.white)
-            }
-        }
-        
-        ToolbarItem(placement: .principal) {
-            if showGreeting, let greetingText = greetingText {
-                HStack {
-                    Spacer()
+
+                Spacer()
+
+                // Greeting Text (Center)
+                if showGreeting, let greetingText = greetingText {
                     Text(greetingText)
                         .font(.callout)
                         .foregroundColor(.white)
-                    Spacer()
                 }
+
+                Spacer()
+
+                // Notification Bell (Trailing - Placeholder)
+                // Uncomment and add functionality when needed
+//                Button {
+//                    // Add functionality for the notification bell
+//                } label: {
+//                    Image(systemName: "bell")
+//                        .font(.title2)
+//                        .foregroundColor(.white)
+//                }
             }
+            .padding()
         }
-        
-        //Temporarily comment out the notification bar...
-//        ToolbarItem(placement: .navigationBarTrailing) {
-//            Button {
-//                // Add functionality for the notification bell
-//            } label: {
-//                Image(systemName: "bell")
-//                    .font(.title2)
-//                    .foregroundColor(.white)
-//            }
-//        }
+        .frame(maxWidth: .infinity, maxHeight: 44) // Standard toolbar height
     }
 }

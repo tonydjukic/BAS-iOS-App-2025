@@ -16,7 +16,7 @@ struct basiOS_HomeView: View {
     @State private var basiOS_lastRefreshTime: Date?
     @State private var basiOS_isRefreshing = false
     @State private var basiOS_errorMessage: String?
-    @State private var selectedMatch: basiOS_Match? = nil // Popup match state
+    @State private var selectedMatch: basiOS_Match? = nil
 
     enum NavigationDestination {
         case dashboard
@@ -29,8 +29,12 @@ struct basiOS_HomeView: View {
             NavigationStack {
                 VStack(spacing: 0) {
                     // Toolbar at the top
-                    toolbarView()
-                    
+                    basiOS_Toolbar(
+                        showDrawer: $showDrawer,
+                        showGreeting: selectedView == .dashboard,
+                        greetingText: greetingText()
+                    )
+
                     // Main content area
                     ScrollView {
                         VStack(spacing: 16) {
@@ -51,14 +55,14 @@ struct basiOS_HomeView: View {
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.top, 16) // Space below the toolbar
+                        .padding(.top, 16)
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .background(
                     Color.clear
                         .basiOS_SlateGradient()
-                        .edgesIgnoringSafeArea(.all) // Full-screen gradient
+                        .edgesIgnoringSafeArea(.all)
                 )
                 .onAppear {
                     configureTransparentNavigationBar()
@@ -88,46 +92,6 @@ struct basiOS_HomeView: View {
         }
     }
 
-    // MARK: - Toolbar View
-    @ViewBuilder
-    private func toolbarView() -> some View {
-        HStack {
-            // Left: Drawer toggle button
-            Button(action: {
-                withAnimation {
-                    showDrawer.toggle()
-                }
-            }) {
-                Image(systemName: "line.horizontal.3")
-                    .font(.title2)
-                    .foregroundColor(.white)
-            }
-
-            Spacer()
-
-            // Center: Greeting text (dashboard only)
-            if selectedView == .dashboard, let greeting = greetingText() {
-                Text(greeting)
-                    .font(.callout)
-                    .foregroundColor(.white)
-            }
-
-            Spacer()
-
-            // Right: Notification button
-//            Button(action: {
-//                // Placeholder for notification functionality
-//            }) {
-//                Image(systemName: "bell")
-//                    .font(.title2)
-//                    .foregroundColor(.white)
-//            }
-        }
-        .padding()
-        .background(Color.black.opacity(0.7)) // Semi-transparent background
-    }
-
-    // MARK: - Helper Methods
     private func greetingText() -> String? {
         if let user = basiOS_userData {
             return "Welcome, \(user.firstName ?? user.displayName)\(user.lastName != nil ? " \(user.lastName!)" : "")"
@@ -155,19 +119,7 @@ struct basiOS_HomeView: View {
     }
 
     private func basiOS_logout() {
-        // Clear Keychain data
         basiOS_KeychainHelper.basiOS_delete(key: "basiOS_sessionToken")
-        basiOS_KeychainHelper.basiOS_delete(key: "basiOS_userID")
-        // Clear UserDefaults
-        UserDefaults.standard.removeObject(forKey: "authToken")
-        UserDefaults.standard.removeObject(forKey: "userID")
-        UserDefaults.standard.synchronize()
-        // Clear cookies if using web-based APIs
-        if let cookieStorage = HTTPCookieStorage.shared.cookies {
-            for cookie in cookieStorage {
-                HTTPCookieStorage.shared.deleteCookie(cookie)
-            }
-        }
         DispatchQueue.main.async {
             withAnimation {
                 basiOS_isAuthenticated = false
