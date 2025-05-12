@@ -5,11 +5,6 @@
 //  Created by Tony Djukic on 2025-05-05.
 //
 
-//
-//  basiOS_MatchDataModels.swift
-//  Brampton Adult Soccer
-//
-
 import Foundation
 
 struct basiOS_MatchDataResponse: Codable {
