@@ -4,6 +4,9 @@ This is the official Brampton Adult Soccer iOS app that integrates and communica
 
 ## CHANGELOG
 
+ = 0.6.1 =
+ * NEW: Adding Password Reset functionality on the LoginView screen in basiOS_LoginView.swift
+
  = 0.6 =
  * NEW: Making use of the `is_suspended` data we pass along from the WP `user_sessions` API to flag matches where a user is suspended.
  * NEW: Resubmitting the app to the AppStore Connect platform.

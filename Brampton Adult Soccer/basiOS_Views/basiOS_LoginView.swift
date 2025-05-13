@@ -14,6 +14,7 @@ struct basiOS_LoginView: View {
     @State private var basiOS_isLoading = false
     @State private var basiOS_errorMessage: String?
     @State private var basiOS_showError = false
+    @State private var basiOS_showResetSuccessMessage = false // Added for reset feedback
     
     var body: some View {
         ZStack {
@@ -52,9 +53,35 @@ struct basiOS_LoginView: View {
                     .disabled(basiOS_isLoading || basiOS_login.isEmpty || basiOS_password.isEmpty)
                     .padding(.horizontal, 25)
                     
+                    Button(action: basiOS_handlePasswordReset) { // Adjusted Reset Password Button
+                        Text("Forgot Password?")
+                            .foregroundColor(.white)
+                            .underline()
+                            .font(.system(size: 14))
+                            .padding(.top, 5)
+                    }
+                    .disabled(basiOS_login.isEmpty) // Disable when the Username field is empty
+                    .opacity(basiOS_login.isEmpty ? 0.2 : 1.0) // Adjust opacity dynamically
+                    
+                    Text("Provide email or username.")
+                        .foregroundColor(.white.opacity(0.9))
+                        .italic()
+                        .font(.system(size: 12))
+                        .padding(.top, 1)
+                        .disabled(basiOS_login.isEmpty) // Disable when the Username field is empty
+                        .opacity(basiOS_login.isEmpty ? 0.8 : 1.0) // Adjust opacity dynamically
+                    
                     if let basiOS_errorMessage = basiOS_errorMessage, basiOS_showError {
                         Text(basiOS_errorMessage)
                             .foregroundColor(Color(red: 1, green: 0.85, blue: 0.85))
+                            .font(.system(size: 14))
+                            .transition(.opacity)
+                            .padding(.top, 5)
+                    }
+                    
+                    if basiOS_showResetSuccessMessage { // Added Reset Success Feedback
+                        Text("Password reset email has been sent.")
+                            .foregroundColor(.white)
                             .font(.system(size: 14))
                             .transition(.opacity)
                             .padding(.top, 5)
@@ -90,6 +117,47 @@ struct basiOS_LoginView: View {
            let savedPassword = String(data: savedPasswordData, encoding: .utf8) {
             basiOS_password = savedPassword
         }
+    }
+    
+    private func basiOS_handlePasswordReset() { // Debugging added
+        guard !basiOS_login.isEmpty else {
+            basiOS_errorMessage = "Please enter your username or email to reset your password."
+            basiOS_showError = true
+            return
+        }
+        
+        basiOS_showError = false
+        basiOS_isLoading = true
+        
+        // Prepare the API request
+        let url = URL(string: "\(Config.apiBaseURL)/ios_passwordreset")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body: [String: Any] = ["identifier": basiOS_login]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
+        
+        // Execute the API request
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                basiOS_isLoading = false
+                
+                if let error = error {
+                    basiOS_errorMessage = error.localizedDescription
+                    basiOS_showError = true
+                    return
+                }
+                
+                if let httpResponse = response as? HTTPURLResponse {
+                    if httpResponse.statusCode == 200 {
+                        basiOS_showResetSuccessMessage = true
+                    } else {
+                        basiOS_errorMessage = "Failed to send password reset email. Please try again later."
+                        basiOS_showError = true
+                    }
+                }
+            }
+        }.resume()
     }
     
     private func basiOS_handleLogin() {
