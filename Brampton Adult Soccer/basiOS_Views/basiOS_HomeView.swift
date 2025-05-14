@@ -98,6 +98,14 @@ struct basiOS_HomeView: View {
         }
         return nil
     }
+//    private func greetingText() -> String? {
+//        if let user = basiOS_userData {
+//            let firstName = decodeHTMLEntities(user.firstName ?? user.displayName) // Decoding applied here
+//            let lastName = user.lastName != nil ? " \(decodeHTMLEntities(user.lastName!))" : ""
+//            return "Welcome, \(firstName)\(lastName)"
+//        }
+//        return nil
+//    }
 
     private func configureTransparentNavigationBar() {
         let appearance = UINavigationBarAppearance()

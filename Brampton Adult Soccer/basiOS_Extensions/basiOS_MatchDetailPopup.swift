@@ -73,7 +73,7 @@ struct MatchDetailPopup: View {
                                         .foregroundColor(.white.opacity(0.4))
                                 )
                                 .font(.title2)
-                            Text(match.home_team.name)
+                            Text(decodeHTMLEntities(match.home_team.name))
                                 .font(.title2)
                         }
                         .frame(maxWidth: .infinity,)
@@ -92,7 +92,7 @@ struct MatchDetailPopup: View {
                                         .foregroundColor(.white.opacity(0.4))
                                 )
                                 .font(.title2)
-                            Text(match.away_team.name)
+                            Text(decodeHTMLEntities(match.away_team.name))
                                 .font(.title2)
                         }
                         .frame(maxWidth: .infinity,)
@@ -115,7 +115,7 @@ struct MatchDetailPopup: View {
                             Link(destination: url) {
                                 HStack {
                                     Image(systemName: "map")
-                                    Text(match.venue.title)
+                                    Text(decodeHTMLEntities(match.venue.title))
                                 }
                                 .foregroundColor(Color(red: 1.0, green: 0.75, blue: 0.35))
                             }

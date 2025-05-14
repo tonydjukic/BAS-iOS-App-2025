@@ -23,6 +23,9 @@ struct basiOS_TeamData: Codable {
     let team_name: String
     let is_team_suspended: Bool
     let matches: [basiOS_Match]
+    var decoded_team_name: String {
+        decodeHTMLEntities(team_name)
+    }
 }
 
 struct basiOS_Match: Codable, Identifiable {
@@ -46,4 +49,7 @@ struct basiOS_Team: Codable {
     let id: Int
     let name: String
     let jersey_color: String
+    var decoded_name: String {
+        decodeHTMLEntities(name)
+    }
 }

@@ -4,6 +4,9 @@ This is the official Brampton Adult Soccer iOS app that integrates and communica
 
 ## CHANGELOG
 
+ = 0.6.2 =
+ * NEW: Adding HTML entity decoding into the application so that things like apostrophes and ampersands are displayed properly.
+
  = 0.6.1 =
  * NEW: Adding Password Reset functionality on the LoginView screen in basiOS_LoginView.swift
 
