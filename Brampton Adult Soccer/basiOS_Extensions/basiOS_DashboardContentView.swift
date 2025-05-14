@@ -12,7 +12,9 @@ struct DashboardContentView: View {
     @Binding var matchData: basiOS_MatchData?
     let isLoading: Bool
     @Binding var errorMessage: String?
-    @Binding var selectedMatch: basiOS_Match?
+    
+    // Use a callback instead of directly updating selectedMatch
+    let onMatchSelect: (basiOS_Match) -> Void
 
     var body: some View {
         VStack(spacing: 20) {
@@ -44,20 +46,20 @@ struct DashboardContentView: View {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text("\(match.match_date) at \(match.match_time)")
                                         .font(.caption)
-                                        .foregroundColor( match.is_suspended ? Color.white : Color.black)
+                                        .foregroundColor(match.is_suspended ? Color.white : Color.black)
                                         .frame(maxWidth: .infinity)
                                     Text("\(match.home_team.name) vs \(match.away_team.name)")
                                         .font(.subheadline)
-                                        .foregroundColor( match.is_suspended ? Color.white : Color.black)
-                                        .strikethrough( match.is_suspended ? true : false )
+                                        .foregroundColor(match.is_suspended ? Color.white : Color.black)
+                                        .strikethrough(match.is_suspended)
                                         .frame(maxWidth: .infinity)
                                     Text(match.venue.title)
                                         .font(.caption)
-                                        .foregroundColor( match.is_suspended ? Color.white.opacity(0.8) : Color.black.opacity(0.8) )
+                                        .foregroundColor(match.is_suspended ? Color.white.opacity(0.8) : Color.black.opacity(0.8))
                                         .frame(maxWidth: .infinity)
                                 }
                                 .padding(8)
-                                .background(match.is_suspended ? Color.black.opacity(0.5) : Color.white.opacity(0.5)) // Updated background color
+                                .background(match.is_suspended ? Color.black.opacity(0.5) : Color.white.opacity(0.5))
                                 .cornerRadius(6)
                                 .overlay(
                                     HStack {
@@ -77,7 +79,7 @@ struct DashboardContentView: View {
                                 )
                                 .padding(.vertical, 5)
                                 .onTapGesture {
-                                    selectedMatch = match
+                                    onMatchSelect(match) // Invoke the callback
                                 }
                             }
                         }

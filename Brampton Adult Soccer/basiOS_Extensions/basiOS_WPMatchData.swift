@@ -58,9 +58,17 @@ struct basiOS_WPMatchData {
                 return
             }
             
+//            do {
+//                let response = try JSONDecoder().decode(basiOS_MatchDataResponse.self, from: data)
+//                completion(.success(response))
+//            } catch {
+//                completion(.failure(error))
+//            }
             do {
                 let response = try JSONDecoder().decode(basiOS_MatchDataResponse.self, from: data)
-                completion(.success(response))
+                var mutableResponse = response
+                mutableResponse.preprocess() // Decode all HTML entities
+                completion(.success(mutableResponse))
             } catch {
                 completion(.failure(error))
             }

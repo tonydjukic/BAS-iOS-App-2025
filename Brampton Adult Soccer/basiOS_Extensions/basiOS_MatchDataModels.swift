@@ -9,47 +9,81 @@ import Foundation
 
 struct basiOS_MatchDataResponse: Codable {
     let success: Bool
-    let data: basiOS_MatchData
+    var data: basiOS_MatchData
+    
+    mutating func preprocess() {
+        data.preprocess()
+    }
 }
 
 struct basiOS_MatchData: Codable {
     let active_sessions: String
-    let team_data: [basiOS_TeamData]
+    var team_data: [basiOS_TeamData]
     let api_version: String
+
+    mutating func preprocess() {
+        team_data = team_data.map { team in
+            var updatedTeam = team
+            updatedTeam.preprocess()
+            return updatedTeam
+        }
+    }
 }
 
 struct basiOS_TeamData: Codable {
     let team_id: Int
-    let team_name: String
+    var team_name: String
     let is_team_suspended: Bool
-    let matches: [basiOS_Match]
-    var decoded_team_name: String {
-        decodeHTMLEntities(team_name)
+    var matches: [basiOS_Match]
+
+    mutating func preprocess() {
+        team_name = decodeHTMLEntities(team_name)
+        matches = matches.map { match in
+            var updatedMatch = match
+            updatedMatch.preprocess()
+            return updatedMatch
+        }
     }
 }
 
-struct basiOS_Match: Codable, Identifiable {
+struct basiOS_Match: Codable, Identifiable, Equatable {
     let match_id: Int
-    let match_date: String
-    let match_time: String
-    let venue: basiOS_Venue
-    let home_team: basiOS_Team
-    let away_team: basiOS_Team
+    var match_date: String
+    var match_time: String
+    var venue: basiOS_Venue
+    var home_team: basiOS_Team
+    var away_team: basiOS_Team
     let user_attending: String
     let is_suspended: Bool
+
     var id: Int { match_id }
+    // Equatable conformance
+    static func == (lhs: basiOS_Match, rhs: basiOS_Match) -> Bool {
+        return lhs.match_id == rhs.match_id
+    }
+
+    mutating func preprocess() {
+        home_team.preprocess()
+        away_team.preprocess()
+        venue.preprocess()
+    }
 }
 
 struct basiOS_Venue: Codable {
-    let title: String
-    let map_url: String?
+    var title: String
+    var map_url: String?
+
+    mutating func preprocess() {
+        title = decodeHTMLEntities(title)
+    }
 }
 
 struct basiOS_Team: Codable {
     let id: Int
-    let name: String
+    var name: String
     let jersey_color: String
-    var decoded_name: String {
-        decodeHTMLEntities(name)
+
+    mutating func preprocess() {
+        name = decodeHTMLEntities(name)
     }
 }

@@ -45,7 +45,11 @@ struct basiOS_HomeView: View {
                                     matchData: $basiOS_matchData,
                                     isLoading: basiOS_isRefreshing,
                                     errorMessage: $basiOS_errorMessage,
-                                    selectedMatch: $selectedMatch
+                                    onMatchSelect: { match in
+                                        DispatchQueue.main.async {
+                                            self.selectedMatch = match // Update the state when a match is selected
+                                        }
+                                    }
                                 )
                             case .profile:
                                 basiOS_ProfileView(
@@ -76,7 +80,9 @@ struct basiOS_HomeView: View {
                 basiOS_isAuthenticated: $basiOS_isAuthenticated
             )
         }
-        .sheet(item: $selectedMatch) { match in
+        .sheet(item: $selectedMatch, onDismiss: {
+            selectedMatch = nil // Clear selectedMatch after dismissal
+        }) { match in
             MatchDetailPopup(match: match)
         }
         .task {
@@ -98,14 +104,6 @@ struct basiOS_HomeView: View {
         }
         return nil
     }
-//    private func greetingText() -> String? {
-//        if let user = basiOS_userData {
-//            let firstName = decodeHTMLEntities(user.firstName ?? user.displayName) // Decoding applied here
-//            let lastName = user.lastName != nil ? " \(decodeHTMLEntities(user.lastName!))" : ""
-//            return "Welcome, \(firstName)\(lastName)"
-//        }
-//        return nil
-//    }
 
     private func configureTransparentNavigationBar() {
         let appearance = UINavigationBarAppearance()
