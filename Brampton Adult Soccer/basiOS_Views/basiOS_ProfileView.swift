@@ -204,12 +204,12 @@ struct basiOS_ProfileView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .foregroundColor(.black)
                 
-                ForEach(profileData.team_history, id: \.id) { team in
+                ForEach(Array(profileData.team_history.enumerated()), id: \.offset) { index, team in
                     VStack(spacing: 4) {
                         Link(destination: URL(string: team.teamurl)!) {
                             Text(team.teamname)
                                 .font(.body)
-                                .foregroundColor(Color(red: 0.8, green: 0.33, blue: 0.0)) // Burnt orange color
+                                .foregroundColor(Color(red: 0.8, green: 0.33, blue: 0.0))
                         }
                         Text("(\(team.session_name))")
                             .font(.footnote)
@@ -259,7 +259,8 @@ struct basiOS_ProfileView: View {
         isLoading = true
         errorMessage = nil
 
-        let apiURL = URL(string: "\(Config.apiBaseURL)/user-demographics?user_id=\(user.id)")!
+        //let apiURL = URL(string: "\(Config.apiBaseURL)/user-demographics?user_id=\(user.id)")!
+        let apiURL = URL(string: "\(Config.apiBaseURL)/user-demographics")!
         guard let savedLoginData = basiOS_KeychainHelper.basiOS_load(key: "basiOS_savedLogin"),
               let savedLogin = String(data: savedLoginData, encoding: .utf8),
               let savedPasswordData = basiOS_KeychainHelper.basiOS_load(key: "basiOS_password"),

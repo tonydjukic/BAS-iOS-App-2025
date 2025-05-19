@@ -17,7 +17,7 @@ struct basiOS_WPMatchData {
         completion: @escaping (Result<basiOS_MatchDataResponse, Error>) -> Void
     ) {
         var components = URLComponents(string: "\(basiOS_baseURL)/user-sessions")!
-        components.queryItems = [URLQueryItem(name: "user_id", value: "\(userID)")]
+        //components.queryItems = [URLQueryItem(name: "user_id", value: "\(userID)")]
         
         guard let url = components.url else {
             completion(.failure(NSError(domain: "BASiOS", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
