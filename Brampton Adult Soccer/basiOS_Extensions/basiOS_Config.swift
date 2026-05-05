@@ -11,8 +11,8 @@ struct Config {
     // Base API URL depending on the build configuration
     static var apiBaseURL: String {
         //if DEBUG
-        return "https://bramptonsoccer.flywheelstaging.com/wp-json/baslms/v1"
+        // return "https://bramptonsoccer.flywheelstaging.com/wp-json/baslms/v1"
         //if Production
-        // return "https://bramptonsoccer.com/wp-json/baslms/v1"
+        return "https://bramptonsoccer.com/wp-json/baslms/v1"
     }
 }
