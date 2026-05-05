@@ -4,6 +4,9 @@ This is the official Brampton Adult Soccer iOS app that integrates and communica
 
 ## CHANGELOG
 
+= 0.9.0 =
+* NEW: Adding 'Attendance' capabiltiies and visual indicators to the Match List cards and Match Details Pop-Up.
+
 = 0.8.0 =
 * FIX: In Team History, if a user has always been on the same team, there wasn't an unique ID for the team, so the Team History would iterate the correct number of teams but display the same data for the session.  This has been fixed by enumerating the array and working through the iterations that way.
 * CHANGE: Resulting from an alternative method of obtaining a user ID, rather than using a parameter appended to the API calls, we are using the authenticated user's ID, we no longer need to include the `user_id` on our API calls.

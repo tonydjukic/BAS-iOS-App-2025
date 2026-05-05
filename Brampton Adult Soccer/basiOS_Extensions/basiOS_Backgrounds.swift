@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// Only defines the raw gradient
 extension View {
     func basiOS_SlateGradient() -> some View {
         LinearGradient(
@@ -18,18 +17,18 @@ extension View {
             startPoint: .top,
             endPoint: .bottom
         )
-        .edgesIgnoringSafeArea(.all)
+        .ignoresSafeArea()
     }
     func basiOS_GreenGradient() -> some View {
         LinearGradient(
             colors: [
-                Color(red: 0.05, green: 0.25, blue: 0.1),  // Dark green
-                Color(red: 0.05, green: 0.45, blue: 0.1)    // Light green
+                Color(red: 0.05, green: 0.25, blue: 0.1),
+                Color(red: 0.05, green: 0.45, blue: 0.1)
             ],
             startPoint: .top,
             endPoint: .bottom
         )
-        .edgesIgnoringSafeArea(.all)
+        .ignoresSafeArea()
     }
     func basiOS_DarkSlateGradient() -> some View {
         LinearGradient(
@@ -40,6 +39,6 @@ extension View {
             startPoint: .top,
             endPoint: .bottom
         )
-        .edgesIgnoringSafeArea(.all)
+        .ignoresSafeArea()
     }
 }

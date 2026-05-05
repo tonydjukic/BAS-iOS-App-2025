@@ -12,9 +12,16 @@ struct DashboardContentView: View {
     @Binding var matchData: basiOS_MatchData?
     let isLoading: Bool
     @Binding var errorMessage: String?
-    
-    // Use a callback instead of directly updating selectedMatch
-    let onMatchSelect: (basiOS_Match) -> Void
+
+    let onMatchSelect: (basiOS_Match, Int) -> Void
+
+    private func attendanceBorderColor(for match: basiOS_Match) -> Color {
+        switch match.user_attending {
+        case "true":  return Color(red: 0.18, green: 0.65, blue: 0.18)
+        case "false": return Color(red: 0.72, green: 0.18, blue: 0.12)
+        default:      return Color.clear
+        }
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -77,9 +84,13 @@ struct DashboardContentView: View {
                                     }
                                     .cornerRadius(6)
                                 )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(attendanceBorderColor(for: match), lineWidth: 2.5)
+                                )
                                 .padding(.vertical, 5)
                                 .onTapGesture {
-                                    onMatchSelect(match) // Invoke the callback
+                                    onMatchSelect(match, team.team_id)
                                 }
                             }
                         }

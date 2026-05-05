@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+struct SelectedMatchInfo: Identifiable {
+    let match: basiOS_Match
+    let teamID: Int
+    let onAttendanceUpdate: () -> Void
+    var id: Int { match.match_id }
+}
+
 struct basiOS_HomeView: View {
     @State private var basiOS_userData: basiOS_User?
     @Binding var basiOS_isAuthenticated: Bool
@@ -16,7 +23,7 @@ struct basiOS_HomeView: View {
     @State private var basiOS_lastRefreshTime: Date?
     @State private var basiOS_isRefreshing = false
     @State private var basiOS_errorMessage: String?
-    @State private var selectedMatch: basiOS_Match? = nil
+    @State private var selectedMatchInfo: SelectedMatchInfo? = nil
 
     enum NavigationDestination {
         case dashboard
@@ -25,17 +32,14 @@ struct basiOS_HomeView: View {
 
     var body: some View {
         ZStack {
-            // Main navigation stack
             NavigationStack {
                 VStack(spacing: 0) {
-                    // Toolbar at the top
                     basiOS_Toolbar(
                         showDrawer: $showDrawer,
                         showGreeting: selectedView == .dashboard,
                         greetingText: greetingText()
                     )
 
-                    // Main content area
                     ScrollView {
                         VStack(spacing: 16) {
                             switch selectedView {
@@ -45,9 +49,17 @@ struct basiOS_HomeView: View {
                                     matchData: $basiOS_matchData,
                                     isLoading: basiOS_isRefreshing,
                                     errorMessage: $basiOS_errorMessage,
-                                    onMatchSelect: { match in
+                                    onMatchSelect: { match, teamID in
                                         DispatchQueue.main.async {
-                                            self.selectedMatch = match // Update the state when a match is selected
+                                            self.selectedMatchInfo = SelectedMatchInfo(
+                                                match: match,
+                                                teamID: teamID,
+                                                onAttendanceUpdate: {
+                                                    Task {
+                                                        await basiOS_refreshMatchData()
+                                                    }
+                                                }
+                                            )
                                         }
                                     }
                                 )
@@ -73,24 +85,27 @@ struct basiOS_HomeView: View {
                 }
             }
 
-            // Navigation drawer overlay
             basiOS_NavigationDrawer(
                 isOpen: $showDrawer,
                 selectedView: $selectedView,
                 basiOS_isAuthenticated: $basiOS_isAuthenticated
             )
         }
-        .sheet(item: $selectedMatch, onDismiss: {
-            selectedMatch = nil // Clear selectedMatch after dismissal
-        }) { match in
-            MatchDetailPopup(match: match)
+        .sheet(item: $selectedMatchInfo, onDismiss: {
+            selectedMatchInfo = nil
+        }) { info in
+            MatchDetailPopup(
+                match: info.match,
+                teamID: info.teamID,
+                onAttendanceUpdate: info.onAttendanceUpdate
+            )
         }
         .task {
             await basiOS_loadUserData()
             await basiOS_refreshMatchData()
         }
-        .onChange(of: selectedView) { newValue in
-            if newValue == .dashboard {
+        .onChange(of: selectedView) {
+            if selectedView == .dashboard {
                 Task {
                     await basiOS_refreshMatchData()
                 }

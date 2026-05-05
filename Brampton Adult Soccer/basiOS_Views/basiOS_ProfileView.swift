@@ -251,7 +251,7 @@ struct basiOS_ProfileView: View {
 
     // MARK: - Fetch Profile Data
     private func fetchProfileData() async {
-        guard let user = basiOS_userData else {
+        guard basiOS_userData != nil else {
             errorMessage = "User data is not available."
             return
         }
@@ -278,7 +278,7 @@ struct basiOS_ProfileView: View {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = try JSONSerialization.data(withJSONObject: credentials)
 
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await URLSession.shared.data(for: request)
 
             let decodedResponse = try JSONDecoder().decode(ProfileAPIResponse.self, from: data)
 
